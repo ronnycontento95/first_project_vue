@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import LoadingSpinner from "./components/LoadingSpinner.vue";
 import BlogPost from "./components/BlogPost.vue";
 import PaginatePostVue from "./components/PaginatePost.vue";
@@ -24,15 +24,28 @@ const previus = () => {
 const fijarFavorito = (title) => {
   favoritoref.value = title;
 };
-fetch("https://jsonplaceholder.typicode.com/posts")
-  .then((res) => res.json())
-  .then((data) => {
-    postsData.value = data;
-  }).finally(()=> {
-    setTimeout(() => {
-      loading.value = false
-    }, 2000);
-  });
+//ESPERA QUE SE CARGE EL COMPONENTE LUEGO HACE LA PETICION AL REST
+onMounted(async() => {
+  try {
+   const res = await fetch('https://jsonplaceholder.typicode.com/posts');
+   postsData.value = await res.json();
+  } catch (error) {
+    console.log(error);
+  }finally{
+    loading.value =false;
+  }
+
+})
+
+// fetch("https://jsonplaceholder.typicode.com/posts")
+//   .then((res) => res.json())
+//   .then((data) => {
+//     postsData.value = data;
+//   }).finally(()=> {
+//     setTimeout(() => {
+//       loading.value = false
+//     }, 2000);
+//   });
 
 const maxlenght = computed(() =>postsData.value.length)
 </script>
